@@ -95,6 +95,111 @@ python app.py
 - Frontend: React Native testing tools.
 - CI/CD: Automated pipelines for building, testing, and deployment.
 
+### Tools
+
+#### Poetry
+Poetry is used for managing dependencies, packaging, and publishing Python projects. This project uses Poetry to manage dependencies and virtual environments.
+
+Setting Up Poetry
+1. Install Poetry
+```aiignore
+curl -sSL https://install.python-poetry.org | python3 -
+```
+2. Install project dependencies
+```aiignore
+poetry install
+```
+This will install all the dependencies listed in the pyproject.toml file.
+
+Dependencies
+
+Here are some of the key dependencies in the pyproject.toml file:
+```aiignore
+[tool.poetry]
+name = "wanderwise"
+version = "0.1.0"
+description = ""
+authors = ["MightContainNuts <mightcontainnuts@icloud.com>"]
+readme = "README.md"
+license = "MIT"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+pre-commit = "^4.0.1"
+pytest-cov = "^6.0.0"
+pytest-sugar = "^1.0.0"
+flake8 = "^7.1.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+```
+Poetry also manages development dependencies like pytest, flake8, and pre-commit hooks.
+
+#### Pre-commit
+Pre-commit is used to run checks automatically before commits are made, ensuring that your code adheres to standards like proper formatting and no trailing whitespace.
+
+Setting Up Pre-commit (it should be setup automatically with poetry and this step should be redundant)
+1. Install pre-commit:
+```aiignore
+pip install pre-commit
+```
+2. Install the hooks defined in the .pre-commit-config.yaml file:
+```aiignore
+pre-commit install
+```
+This will install the hooks and configure Git to use them. The hooks currently in the project include:
+- check-yaml: Checks YAML files for syntax errors.
+- end-of-file-fixer: Ensures files end with a newline.
+- trailing-whitespace: Removes any trailing whitespace.
+- black: Automatically formats Python code using the Black code formatter.
+- flake8: Runs flake8 for Python code style checking.
+- pytest: Runs pytest to execute tests before commits.
+
+Configuration
+
+The configuration file .pre-commit-config.yaml includes the following repositories and hooks:
+
+```aiignore
+repos:
+  - repo: git@github.com:pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        additional_dependencies: [ black ]
+        args: [ '--config=pyproject.toml' ]
+  - repo: local
+    hooks:
+      - id: flake8
+        name: flake8
+        entry: flake8 --exclude=venv/*
+        language: python
+        files: \.py$
+        args: [ '--config=pyproject.toml' ]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        types: [ python ]
+        pass_filenames: false
+        always_run: true
+```
+
 ## Contributing
 We welcome contributions from everyone! To get started:
 1. Fork the repository.
