@@ -1,0 +1,17 @@
+name: Close Issue When PR is Merged
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  close-issue:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Close linked issue
+        uses: peter-evans/close-issue@v2
+        with:
+          issue-number: ${{ github.event.pull_request.title }}
